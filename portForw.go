@@ -8,7 +8,11 @@ import (
 )
 
 func main() {
-	ln, err := net.Listen("tcp", ":4505")
+
+	fmt.Println("Started.")
+	conf := pipe.GetProps()
+	fmt.Println(conf.SrcPort)
+	ln, err := net.Listen("tcp", fmt.Sprintf(":%d", conf.SrcPort))
 	if err != nil {
 		panic(err)
 	}
@@ -25,8 +29,9 @@ func main() {
 
 func handleRequest(conn net.Conn) {
 	fmt.Println("new client")
+	conf := pipe.GetProps()
 
-	proxy, err := net.Dial("tcp", "localhost:8088")
+	proxy, err := net.Dial("tcp", fmt.Sprintf("%s:%d", conf.DestIp, conf.DestPort))
 	if err != nil {
 		panic(err)
 	}
