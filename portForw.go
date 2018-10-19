@@ -41,7 +41,7 @@ func handleRequest(conn net.Conn) {
 	go copyIO(proxy, conn)
 }
 
-func copyIO(src, dest net.Conn) {
+func copyIO(src net.Conn, dest net.Conn) {
 	defer src.Close()
 	defer dest.Close()
 	//io.Copy(src, dest)
