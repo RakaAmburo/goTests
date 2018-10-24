@@ -103,7 +103,7 @@ func main() {
 		for x := 0; x < 10000; x++ {
 			countb, err = f.Write(bufy)
 			count += countb
-			time.Sleep(35 * time.Millisecond)
+			time.Sleep(3600 * time.Microsecond)
 		}
 		one := make([]byte, 1)
 		one[0] = 1
