@@ -1,12 +1,10 @@
 package main
 
 import (
-	"encoding/hex"
 	"flag"
 	"fmt"
 	"io"
 	"os"
-	"time"
 
 	"github.com/jacobsa/go-serial/serial"
 )
@@ -21,7 +19,7 @@ func main() {
 	fmt.Println("Go serial test")
 	port := flag.String("port", "", "serial port to test (/dev/ttyUSB0, etc)")
 	baud := flag.Uint("baud", 115200, "Baud rate")
-	txData := flag.String("txdata", "", "data to send in hex format (01ab238b)")
+	//txData := flag.String("txdata", "", "data to send in hex format (01ab238b)")
 	even := flag.Bool("even", false, "enable even parity")
 	odd := flag.Bool("odd", false, "enable odd parity")
 	rs485 := flag.Bool("rs485", false, "enable RS485 RTS for direction control")
@@ -75,60 +73,24 @@ func main() {
 		defer f.Close()
 	}
 
-	if *txData != "" {
-		//txData_, err := hex.DecodeString(*txData)
-
-		if err != nil {
-			fmt.Println("Error decoding hex data: ", err)
-			os.Exit(-1)
-		}
-
-		size := 32
-		bufy := make([]byte, size)
-
-		//bufy[size-1] = 1
-		/* ind := 0
-		for i := range bufy {
-			bufy[i] = byte(ind)
-			ind++
-			if ind > 9 {
-				ind = 0
-			}
-		} */
-
-		//fmt.Println("Sending: ", hex.EncodeToString(txData_))
-		count := 0
-		countb := 0
-		start := time.Now()
-		for x := 0; x < 100000; x++ {
-			countb, err = f.Write(bufy)
-			count += countb
-			time.Sleep(3600 * time.Microsecond)
-		}
-		one := make([]byte, 1)
-		one[0] = 1
-		f.Write(one)
-		fmt.Println(time.Since(start))
-
-		if err != nil {
-			fmt.Println("Error writing to serial port: ", err)
-		} else {
-			fmt.Printf("Wrote %v bytes\n", count)
-		}
-
-	}
-
 	if *rx {
+		counter := 0
 		for {
-			buf := make([]byte, 32)
+			buf := make([]byte, 1)
 			n, err := f.Read(buf)
 			if err != nil {
 				if err != io.EOF {
 					fmt.Println("Error reading from serial port: ", err)
 				}
 			} else {
-				buf = buf[:n]
-				fmt.Println("Rx: ", hex.EncodeToString(buf))
+				bait := buf[:n]
+				if int(bait[0]) == 1 {
+					fmt.Println("Rx: ", counter)
+					counter = 0
+				} else {
+					counter++
+				}
+
 			}
 		}
 	}
