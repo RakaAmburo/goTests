@@ -100,7 +100,7 @@ func main() {
 		count := 0
 		countb := 0
 		start := time.Now()
-		for x := 0; x < 100000; x++ {
+		for x := 0; x < 1000; x++ {
 			countb, err = f.Write(bufy)
 			count += countb
 			time.Sleep(3600 * time.Microsecond)
