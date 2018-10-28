@@ -68,13 +68,6 @@ func main() {
 
 	f, err := serial.Open(options)
 
-	if err != nil {
-		fmt.Println("Error opening serial port: ", err)
-		os.Exit(-1)
-	} else {
-		defer f.Close()
-	}
-
 	if *txData != "" {
 		//txData_, err := hex.DecodeString(*txData)
 

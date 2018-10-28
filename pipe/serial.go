@@ -1,36 +1,39 @@
 package pipe
 
 import (
-	"fmt"
 	"io"
-	"os"
 
 	"github.com/jacobsa/go-serial/serial"
 )
 
-var rwc io.ReadWriteCloser
+//Usb serial
+type Usb struct {
+	rwc io.ReadWriteCloser
+}
 
 // Write to serial
-func Write(bytes []byte) (n int, err error) {
+func (s Usb) Write(bytes []byte) (n int, err error) {
 
-	rwc.Write(bytes)
+	s.rwc.Write(bytes)
 
 	return
 }
 
+// Read from serial
+func (s Usb) Read(b []byte) (n int, err error) {
+	return
+}
+
 // Close serial
-func Close() {
-	rwc.Close()
+func (s Usb) Close() (err error) {
+	return s.rwc.Close()
 }
 
 //Open the serial
-func Open() {
+func Open() (s Usb, err error) {
 	options := serial.OpenOptions{}
 	rwc, err := serial.Open(options)
-	if err != nil {
-		fmt.Println("Error opening serial port: ", err)
-		os.Exit(-1)
-	} else {
-		defer rwc.Close()
-	}
+	s = Usb{rwc}
+
+	return
 }

@@ -16,6 +16,16 @@ type Writer interface {
 	Write(p []byte) (n int, err error)
 }
 
+type Closer interface {
+	Close() (err error)
+}
+
+type ReaderWriter interface {
+	Reader
+	Writer
+	Closer
+}
+
 type WriterTo interface {
 	WriteTo(w Writer) (n int64, err error)
 }
