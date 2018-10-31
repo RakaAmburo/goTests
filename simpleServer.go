@@ -1,13 +1,15 @@
-package main 
+package main
 
 import (
 	"fmt"
 	"log"
-	"net/http" ) 
+	"net/http"
+)
 
 func homePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to the HomePage!")
+	fmt.Fprintf(w, "Welcome to this dimentions!")
 	fmt.Println("Endpoint Hit: homePage")
+
 }
 
 func handleRequests() {

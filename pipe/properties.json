@@ -1,5 +1,7 @@
 {
     "SrcPort": 4505,
     "DestIp": "localhost",
-    "DestPort": 8088
+    "DestPort": 8088,
+    "SerialPortA": "/dev/ttyUSB0",
+    "SerialPortB": "/dev/ttyUSB1"
 }

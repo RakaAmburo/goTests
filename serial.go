@@ -17,6 +17,12 @@ func usage() {
 	os.Exit(-1)
 }
 
+func use(vals ...interface{}) {
+	for _, val := range vals {
+		_ = val
+	}
+}
+
 func main() {
 	fmt.Println("Go serial test")
 	port := flag.String("port", "", "serial port to test (/dev/ttyUSB0, etc)")
@@ -53,7 +59,7 @@ func main() {
 		parity = serial.PARITY_ODD
 	}
 
-	options := serial.OpenOptions{
+	/* options := serial.OpenOptions{
 		PortName:               *port,
 		BaudRate:               *baud,
 		DataBits:               *databits,
@@ -64,6 +70,21 @@ func main() {
 		Rs485Enable:            *rs485,
 		Rs485RtsHighDuringSend: *rs485HighDuringSend,
 		Rs485RtsHighAfterSend:  *rs485HighAfterSend,
+	}
+	*/
+
+	use(baud, rs485, rs485HighAfterSend, rs485HighDuringSend, stopbits, databits, chartimeout, minread, parity)
+	options := serial.OpenOptions{
+		PortName:               "/dev/ttyUSB0",
+		BaudRate:               uint(115200),
+		DataBits:               uint(8),
+		StopBits:               uint(1),
+		MinimumReadSize:        uint(0),
+		InterCharacterTimeout:  uint(100),
+		ParityMode:             serial.PARITY_NONE,
+		Rs485Enable:            false,
+		Rs485RtsHighDuringSend: false,
+		Rs485RtsHighAfterSend:  false,
 	}
 
 	f, err := serial.Open(options)

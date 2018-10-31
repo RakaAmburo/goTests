@@ -3,6 +3,7 @@ package pipe
 import (
 	//"log"
 	"errors"
+	"fmt"
 )
 
 var ErrShortWrite = errors.New("short write")
@@ -53,16 +54,16 @@ func (l *LimitedReader) Read(p []byte) (n int, err error) {
 	return
 }
 
-func CopyBuffer(dst Writer, src Reader, buf []byte) (written int64, err error) {
+func CopyBuffer(src Reader, dst Writer, buf []byte) (written int64, err error) {
 	// If the reader has a WriteTo method, use it to do the copy.
 	// Avoids an allocation and a copy.
-	if wt, ok := src.(WriterTo); ok {
+	/* if wt, ok := src.(WriterTo); ok {
 		return wt.WriteTo(dst)
-	}
+	} */
 	// Similarly, if the writer has a ReadFrom method, use it to do the copy.
-	if rt, ok := dst.(ReaderFrom); ok {
+	/* if rt, ok := dst.(ReaderFrom); ok {
 		return rt.ReadFrom(src)
-	}
+	} */
 	if buf == nil {
 		size := 32 * 1024
 		if l, ok := src.(*LimitedReader); ok && int64(size) > l.N {
@@ -76,6 +77,7 @@ func CopyBuffer(dst Writer, src Reader, buf []byte) (written int64, err error) {
 	}
 	for {
 		nr, er := src.Read(buf)
+
 		if nr > 0 {
 			nw, ew := dst.Write(buf[0:nr])
 			if nw > 0 {
@@ -83,17 +85,27 @@ func CopyBuffer(dst Writer, src Reader, buf []byte) (written int64, err error) {
 			}
 			if ew != nil {
 				err = ew
+				fmt.Println(err)
 				break
 			}
 			if nr != nw {
 				err = ErrShortWrite
+				fmt.Printf("%d:%d\n", nr, nw)
 				break
 			}
 		}
 		if er != nil {
+			//fmt.Println(er)
 			if er != EOF {
 				err = er
+				//fmt.Println(er)
+				//fmt.Println(time.Now().Format(time.RFC850))
+				//break
+			} else {
+				//fmt.Println(time.Now().Format(time.RFC850))
+				//time.Sleep(200 * time.Millisecond)
 			}
+
 			break
 		}
 	}

@@ -5,6 +5,7 @@ import (
 	"net"
 
 	"./pipe"
+	"github.com/jacobsa/go-serial/serial"
 )
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 			panic(err)
 		}
 
-		go handleRequest(conn)
+		go handleRequest4Serial(conn)
 	}
 }
 
@@ -41,18 +42,41 @@ func handleRequest(conn net.Conn) {
 	go copyIO(proxy, conn)
 }
 
+var usb *pipe.Usb
+
 func handleRequest4Serial(conn net.Conn) {
 	fmt.Println("conecting serial")
-	//conf := pipe.GetProps()
 
-	proxy, err := pipe.Open()
-	if err != nil {
-		panic(err)
+	if usb == nil {
+		fmt.Println("creating usb serial")
+		conf := pipe.GetProps()
+		options := serial.OpenOptions{
+			PortName:               conf.SerialPortA,
+			BaudRate:               uint(115200),
+			DataBits:               uint(8),
+			StopBits:               uint(1),
+			MinimumReadSize:        uint(0),
+			InterCharacterTimeout:  uint(100),
+			ParityMode:             serial.PARITY_NONE,
+			Rs485Enable:            false,
+			Rs485RtsHighDuringSend: false,
+			Rs485RtsHighAfterSend:  false,
+		}
+
+		var err error
+
+		usb, err = pipe.Open(options)
+		if err != nil {
+			panic(err)
+		}
 	}
 
-	fmt.Println("proxy connected")
-	go copyIO4Serial(conn, proxy)
-	go copyIO4Serial(proxy, conn)
+	fmt.Println("usb connected")
+	go copyIO4Serial(conn, usb)
+
+	usb.Listen(conn)
+
+	go copyIO4Serial(usb, conn)
 
 }
 
@@ -64,8 +88,8 @@ func copyIO(src, dest net.Conn) {
 }
 
 func copyIO4Serial(src, dest pipe.ReaderWriter) {
-	defer src.Close()
-	defer dest.Close()
+	//defer src.Close()
+	//defer dest.Close()
 
 	pipe.CopyBuffer(src, dest, nil)
 }
