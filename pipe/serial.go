@@ -1,6 +1,7 @@
 package pipe
 
 import (
+	"fmt"
 	"io"
 	"math"
 	"net"
@@ -19,6 +20,7 @@ func (s Usb) Write(bytes []byte) (n int, err error) {
 
 	pack := 32
 	total := len(bytes)
+	//fmt.Printf("total to be writen %d\n", total)
 	nTotal := 0
 	loops := math.Ceil(float64(total) / float64(pack))
 	sent := 0
@@ -40,7 +42,7 @@ func (s Usb) Write(bytes []byte) (n int, err error) {
 		//fmt.Println(total)
 		time.Sleep(8000 * time.Microsecond) //3600
 	}
-
+	fmt.Printf("Write %d\n", n)
 	return
 }
 
@@ -93,7 +95,7 @@ func (s Usb) Read(b []byte) (n int, err error) {
 		count += n
 		time.Sleep(8000 * time.Microsecond)
 	}
-	//fmt.Println(count)
+	fmt.Printf("Read %d\n", count+32)
 	return count, err
 }
 

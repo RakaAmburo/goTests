@@ -3,6 +3,7 @@ package main
 import (
 	"fmt" //"io"
 	"net"
+	"time"
 
 	"./pipe"
 	"github.com/jacobsa/go-serial/serial"
@@ -10,22 +11,24 @@ import (
 
 func main() {
 
-	fmt.Println("Started.")
+	fmt.Println("Startin port to usb pipe.")
 	conf := pipe.GetProps()
 	fmt.Println(conf.SrcPort)
-	ln, err := net.Listen("tcp", fmt.Sprintf(":%d", conf.SrcPort))
+	port, err := net.Listen("tcp", fmt.Sprintf(":%d", conf.SrcPort))
 	if err != nil {
 		panic(err)
 	}
 
-	for {
-		conn, err := ln.Accept()
-		if err != nil {
-			panic(err)
-		}
-
-		go handleRequest4Serial(conn)
+	conn, err := port.Accept()
+	fmt.Println("ACEPTA")
+	if err != nil {
+		panic(err)
 	}
+
+	go handleRequest(conn)
+
+	time.Sleep(100000 * time.Millisecond)
+
 }
 
 func handleRequest(conn net.Conn) {

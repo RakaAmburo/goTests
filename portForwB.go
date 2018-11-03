@@ -11,9 +11,8 @@ import (
 
 func main() {
 
-	fmt.Println("Started.")
+	fmt.Println("Stargin usb to port pipe")
 	conf := pipe.GetProps()
-	fmt.Println(conf.SrcPort)
 
 	options := serial.OpenOptions{
 		PortName:               conf.SerialPortB,
@@ -27,24 +26,23 @@ func main() {
 		Rs485RtsHighDuringSend: false,
 		Rs485RtsHighAfterSend:  false,
 	}
-	ln, err := pipe.Open(options)
+
+	usb, err := pipe.Open(options)
 	if err != nil {
 		panic(err)
 	}
 
-	p, er := net.Listen("tcp", fmt.Sprintf(":%d", 8818))
-	if er != nil {
-		panic(er)
+	port, err := net.Dial("tcp", fmt.Sprintf("%s:%d", conf.DestIp, conf.DestPort))
+	if err != nil {
+		panic(err)
 	}
 
-	go handleRequest2(ln)
+	usb.Listen(port)
+	go copyIO4Serial2(usb, port)
+	//time.Sleep(200 * time.Millisecond)
+	go copyIO4Serial2(port, usb)
 
-	for {
-		_, er2 := p.Accept()
-		if er2 != nil {
-			panic(er2)
-		}
-	}
+	time.Sleep(100000 * time.Millisecond)
 
 }
 

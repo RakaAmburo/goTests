@@ -80,6 +80,7 @@ func CopyBuffer(src Reader, dst Writer, buf []byte) (written int64, err error) {
 
 		if nr > 0 {
 			nw, ew := dst.Write(buf[0:nr])
+			//fmt.Printf("Writing %d\n", nw)
 			if nw > 0 {
 				written += int64(nw)
 			}
@@ -109,5 +110,9 @@ func CopyBuffer(src Reader, dst Writer, buf []byte) (written int64, err error) {
 			break
 		}
 	}
+	//if written > 0 {
+	//fmt.Println(written)
+	//}
+
 	return written, err
 }
