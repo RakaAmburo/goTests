@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $("#velador").click(function (event) {
+                $.getJSON("/velador", function (response) {
+                    $("#console").append(event.target.innerHTML+ " " + response.message + "<br>");
+                });
+            });
+
+            $("#luzCama").click(function (event) {
+                $.getJSON("/luzCama", function (response) {
+                    $("#console").append(event.target.innerHTML+ " " + response.message + "<br>");
+                });
+            });
+
+            $("#mute").click(function (event) {
+                $.getJSON("/mute", function (response) {
+                    $("#console").append(event.target.innerHTML+ " " + response.message + "<br>");
+                });
+            });
+
+            $("#ventLightOn").click(function (event) {
+                $.getJSON("/ventLighOn", function (response) {
+                    $("#console").append(event.target.innerHTML+ " " + response.message + "<br>");
+                });
+            });
+
+            $("#ventLightOff").click(function (event) {
+                $.getJSON("/ventLighOff", function (response) {
+                    $("#console").append(event.target.innerHTML+ " " + response.message + "<br>");
+                });
+            });
+
+        });
+    </script>
+</head>
+
+<body>
+
+    <button id="velador">velador</button>
+    <br>
+    <br>
+    <button id="luzCama">luz cama</button>
+    <br>
+    <br>
+    <button id="mute">mute</button>
+    <br>
+    <br>
+    <button id="ventLightOn">luz ventilador on</button>
+    <br>
+    <br>
+    <button id="ventLightOff">luz ventilador off</button>
+    <br>
+    <br>
+    <br>
+
+    <div id="console" ></div>
+
+</body>
+
+</html>
