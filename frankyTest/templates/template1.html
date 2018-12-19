@@ -6,34 +6,17 @@
     <script>
         $(document).ready(function () {
 
-            $("#velador").click(function (event) {
-                $.getJSON("/velador", function (response) {
-                    $("#console").append(event.target.innerHTML+ " " + response.message + "<br>");
+            $('#buttons button').each(function () {
+                $(this).html($(this).val());
+                $(this).bind("click", event => {
+                    $.getJSON("/" + $(this).val(), function (response) {
+                        $("#console").append(event.target.innerHTML + " " + response.message + "<br>");
+                    });
                 });
             });
 
-            $("#luzCama").click(function (event) {
-                $.getJSON("/luzCama", function (response) {
-                    $("#console").append(event.target.innerHTML+ " " + response.message + "<br>");
-                });
-            });
-
-            $("#mute").click(function (event) {
-                $.getJSON("/mute", function (response) {
-                    $("#console").append(event.target.innerHTML+ " " + response.message + "<br>");
-                });
-            });
-
-            $("#ventLightOn").click(function (event) {
-                $.getJSON("/ventLighOn", function (response) {
-                    $("#console").append(event.target.innerHTML+ " " + response.message + "<br>");
-                });
-            });
-
-            $("#ventLightOff").click(function (event) {
-                $.getJSON("/ventLighOff", function (response) {
-                    $("#console").append(event.target.innerHTML+ " " + response.message + "<br>");
-                });
+            $('#clearConsole').bind("click", function (event) {
+                $("#console").html("");
             });
 
         });
@@ -42,24 +25,26 @@
 
 <body>
 
-    <button id="velador">velador</button>
-    <br>
-    <br>
-    <button id="luzCama">luz cama</button>
-    <br>
-    <br>
-    <button id="mute">mute</button>
-    <br>
-    <br>
-    <button id="ventLightOn">luz ventilador on</button>
-    <br>
-    <br>
-    <button id="ventLightOff">luz ventilador off</button>
-    <br>
-    <br>
-    <br>
+    <div id="buttons">
+        <button value="velador"></button>
+        <br>
+        <br>
+        <button value="luzCama"></button>
+        <br>
+        <br>
+        <button value="mute"></button>
+        <br>
+        <br>
+        <button value="ventLights"></button>
+        <br>
+        <br>
+        <br>
+    </div>
 
-    <div id="console" ></div>
+    <div id="console"></div>
+    <button id="clearConsole">clear</button>
+    <div id="serverConsole"></div>
+    <button id="clearServerConsole">clear</button>
 
 </body>
 
