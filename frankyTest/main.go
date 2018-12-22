@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/jacobsa/go-serial/serial"
+	"github.com/mercadolibre/goTests/frankyTest/ws"
 	"io"
 	"log"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
 var ventLightOn = []byte("D1TIT1&489F1039T1961H3936S#8HFT3FT17FTFTFTFTFTFSFT3FT17FTFTFTFTFTFSFT3FT17FTFTFTFTFTFSFT3FT17FTFTFTFTFTFSFT3FT17FTFTFTFTFTFSFT3FT17FTFTFTFTFTFSFT3FT17FTFTFTFTFTFSFT3FT17FTFTFTFTFTFZ|")
@@ -19,6 +19,9 @@ var mute = []byte("D1TIT1&838F1680T19012H#4FT12FT2F2TFH4FT12FT2F2TFS|")
 
 func readFromArdu(port io.ReadCloser) {
 
+	fmt.Println("Iniciamos ws server")
+	wsLog := ws.CreateServer()
+
 	for {
 		buf := make([]byte, 32)
 		n, err := port.Read(buf)
@@ -28,7 +31,10 @@ func readFromArdu(port io.ReadCloser) {
 			}
 		} else {
 			buf = buf[:n]
-			fmt.Print(string(buf))
+			partial := string(buf)
+			fmt.Print(partial)
+			wsLog.Write(partial)
+
 		}
 	}
 
@@ -36,8 +42,8 @@ func readFromArdu(port io.ReadCloser) {
 
 func main() {
 
-	 options := serial.OpenOptions{
-		PortName:        "/dev/cu.usbmodem143241",
+	options := serial.OpenOptions{
+		PortName:        "/dev/cu.usbmodem20",
 		BaudRate:        9600,
 		DataBits:        8,
 		StopBits:        1,
@@ -63,7 +69,7 @@ func main() {
 
 	router.GET("/velador", func(c *gin.Context) {
 
-		 _, err := port.Write(velador)
+		_, err := port.Write(velador)
 		if err != nil {
 			log.Fatalf("port.Write: %v", err)
 		}
@@ -73,18 +79,17 @@ func main() {
 		})
 	})
 
-
 	router.GET("/ventLights", func(c *gin.Context) {
 
 		var ventSignal []byte
-		if ventState{
+		if ventState {
 			ventSignal = ventLightOff
 			ventState = false
 		} else {
 			ventSignal = ventLightOn
 			ventState = true
 		}
-		 _, err := port.Write(ventSignal)
+		_, err := port.Write(ventSignal)
 		if err != nil {
 			log.Fatalf("port.Write: %v", err)
 		}
@@ -96,7 +101,7 @@ func main() {
 
 	router.GET("/luzCama", func(c *gin.Context) {
 
-		 _, err := port.Write(luzCama)
+		_, err := port.Write(luzCama)
 		if err != nil {
 			log.Fatalf("port.Write: %v", err)
 		}
@@ -108,7 +113,7 @@ func main() {
 
 	router.GET("/mute", func(c *gin.Context) {
 
-		 _, err := port.Write(mute)
+		_, err := port.Write(mute)
 		if err != nil {
 			log.Fatalf("port.Write: %v", err)
 		}

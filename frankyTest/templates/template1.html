@@ -1,5 +1,23 @@
 <!DOCTYPE html>
 <html>
+<style>
+
+    .FixedHeightContainer
+    {
+        font-size: 9px;
+        height: 160px;
+        width:380px;
+        padding:3px;
+        background:#000307;
+    }
+    .Content
+    { font-size: 9px;
+        height:110px;
+        overflow:auto;
+        background:#fff;
+    }
+
+</style>
 
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -18,6 +36,23 @@
             $('#clearConsole').bind("click", function (event) {
                 $("#console").html("");
             });
+
+            const domain = window.self.location.hostname;
+
+            const socket = new WebSocket("ws://" + domain + ":8080/wsServer");
+
+            socket.onopen = function () {
+                console.log("Status: Connected");
+            };
+
+            socket.onmessage = function (e) {
+                $("#serverConsole").append(e.data );
+            };
+
+            $('#clearServerConsole').bind("click", function (event) {
+                $("#serverConsole").html("");
+            });
+
 
         });
     </script>
@@ -38,13 +73,27 @@
         <button value="ventLights"></button>
         <br>
         <br>
-        <br>
     </div>
 
-    <div id="console"></div>
-    <button id="clearConsole">clear</button>
-    <div id="serverConsole"></div>
-    <button id="clearServerConsole">clear</button>
+    <div class="FixedHeightContainer">
+        <h2 style="vertical-align: middle;">
+            <span style="color:#fff">Web Console</span>
+            &nbsp;&nbsp;
+            <button id="clearConsole">clear</button>
+        </h2>
+        <div class="Content" id="console"></div>
+    </div>
+
+    <br>
+    <br>
+    <div class="FixedHeightContainer">
+        <h2 style="vertical-align: middle;">
+            <span style="color:#fff">Server Console</span>
+            &nbsp;&nbsp;
+            <button id="clearServerConsole">clear</button>
+        </h2>
+        <div class="Content" id="serverConsole"></div>
+    </div>
 
 </body>
 
