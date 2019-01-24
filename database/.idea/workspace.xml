@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="997d92b9-89b6-457d-9f60-9e6b5ea67c74" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/main_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frankyTest/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../frankyTest/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frankyTest/gin-bin" beforeDir="false" afterPath="$PROJECT_DIR$/../frankyTest/gin-bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frankyTest/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../frankyTest/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frankyTest/templates/template1.html" beforeDir="false" afterPath="$PROJECT_DIR$/../frankyTest/templates/template1.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../websocket/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../websocket/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -55,8 +55,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="23" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-254" />
+    <option name="y" value="-1003" />
     <option name="width" value="1440" />
     <option name="height" value="824" />
   </component>
@@ -65,6 +66,7 @@
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
+      <autoscrollFromSource ProjectPane="true" />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
@@ -133,11 +135,10 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="824" extended-state="6" />
-    <editor active="true" />
+    <frame x="-254" y="-1003" width="1440" height="824" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49726775" visible="true" weight="0.34406295" />
-      <window_info id="Structure" order="1" sideWeight="0.5027322" side_tool="true" visible="true" weight="0.34406295" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4945355" visible="true" weight="0.35407725" />
+      <window_info id="Structure" order="1" sideWeight="0.5054645" side_tool="true" visible="true" weight="0.35407725" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
