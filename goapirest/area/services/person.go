@@ -1,12 +1,12 @@
 package services
 
 import (
-	"github.com/mercadolibre/goTests/goapirest/area/dao"
+	"github.com/mercadolibre/goTests/goapirest/area/persist"
 	"github.com/mercadolibre/goTests/goapirest/area/entities"
 )
 
 type PersonService struct {
-	PD dao.PersonDAO
+	PD persist.PersonDAO
 }
 
 func (ps PersonService) CreatePerson(person *entities.Person) {
@@ -24,4 +24,19 @@ func (ps PersonService) GetPerson(id int64) (*entities.Person, error) {
 		return nil, err
 	}
 
+}
+
+func (ps PersonService) GetAllFiltered() (*[]entities.Person, error){
+
+	people, err := ps.PD.GetAllFiltered()
+	if err == nil {
+		return people, nil
+	} else {
+		return nil, err
+	}
+}
+
+func (ps PersonService) DeletePerson(id int64) error{
+	err := ps.PD.DeleteById(id)
+	return err
 }

@@ -30,9 +30,24 @@ func ( pc PersonController) RegisterEndpoints(){
 	eh :=enhencedHandler{ps: pc.Ps}
 
 	pc.Rg.GET("/person/:id", eh.getEnhencedHandler(getPersonById))
+	pc.Rg.GET("/person", eh.getEnhencedHandler(getAllFiltered))
+
 	pc.Rg.POST("/person", eh.getEnhencedHandler(setPerson))
 
+	pc.Rg.DELETE("/person/:id", eh.getEnhencedHandler(deletePersonById))
 
+
+}
+
+func deletePersonById (c *gin.Context, ps services.PersonService){
+	idStr := c.Param("id")
+	if idStr != "" {
+		id, _ := strconv.Atoi(idStr)
+		err := ps.DeletePerson(int64(id))
+		c.JSON(201, err)
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Id not provided"})
+	}
 }
 
 func getPersonById(c *gin.Context, ps services.PersonService){
@@ -61,4 +76,12 @@ func setPerson(c *gin.Context, ps services.PersonService){
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
+}
+
+func getAllFiltered(c *gin.Context, ps services.PersonService){
+
+	people, err := ps.GetAllFiltered()
+	if err == nil {
+		c.JSON(200, people)
+	}
 }
