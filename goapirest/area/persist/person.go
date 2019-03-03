@@ -45,12 +45,17 @@ func (pd PersonDAO) UpdateById(person *entities.Person){
 
 func (pd PersonDAO) GetAllFiltered() (*[]entities.Person, error){
 
+	db := pd.DB
+	var params 	 []interface{}
+	params = append(params, "se%")
+	params = append(params, "tian")
+	//params := []string{"se%", "tian"}
+	db = pd.DB.Where("first_name LIKE ? AND last_name = ? ", params...)
 	people := make([]entities.Person, 0)
-	if err := pd.DB.Find(&people).Error; err != nil {
+	if err := db.Find(&people).Error; err != nil {
 		fmt.Println(err)
 		return nil, err
 	} else {
 		return &people, nil
 	}
 }
-

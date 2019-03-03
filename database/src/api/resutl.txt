@@ -1,0 +1,6 @@
+Country,City,Population
+Japan,Tokyo,923456
+Australia,Sydney,789650
+Argentina,Buenos Aires,1
+France,paris,923456
+Spain,madrid,789650
