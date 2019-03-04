@@ -21,8 +21,10 @@ func main() {
 	//execanddo to count
 	//handlecount and extract info
 	//calcular loops
-	//instanciar todo y crear un publisher
+	//instanciar todo y crear un publisher <- NO SE VA A ENCARGAR EL JOB
 	//crear jobs y asignarlos al worker con lo que necestia el exec and do
+
+	//---------------
 
 	writer := new(app.CsvWriter)
 	writer.Init("resutl.txt")
