@@ -10,18 +10,20 @@ type SqlJob struct {
 	args  []interface{}
 	topic Topic
 	pkg Package
+	db *sql.DB
 }
 
-func (job SqlJob) Init(args []interface{}, query string, topic Topic, pkg Package) {
+func (job SqlJob) Init(args []interface{}, query string, topic Topic, pkg Package, db *sql.DB) {
 	job.query = query
 	job.args = args
 	job.topic = topic
 	job.pkg = pkg
+	job.db = db
 }
 
 func (job SqlJob) run() {
 	fmt.Println("DOING SOME WORK")
-	ExecAndDo(nil, job.query, job.args, job.BuildPackage)
+	ExecAndDo(job.db, job.query, job.args, job.BuildPackage)
 	job.topic.Publish(job.pkg)
 }
 

@@ -2,15 +2,15 @@ package app
 
 import "database/sql"
 
-type HandleCount struct {
+type HandleSqlCount struct {
 
 }
 
-func (h HandleCount) CalculateLoops(results []sql.RawBytes){
+func (h HandleSqlCount) CalculateLoops(results []sql.RawBytes){
 
 }
 
-func (h HandleCount) GetResult() int{
+func (h HandleSqlCount) GetResult() int{
 	return 1
 }
 
