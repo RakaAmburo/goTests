@@ -21,10 +21,10 @@ type Workers struct {
 	executedTasks *uint64
 }
 
-func (w *Workers) Init(size int) {
+func (w *Workers) Init(size int, workers int) {
 	w.jobs = make(chan Runner, size)
 	w.executedTasks = new(uint64)
-	for x := 1; x <= size; x++ {
+	for x := 1; x <= workers; x++ {
 		go startWorkers(w.executedTasks, w.jobs) //, results)
 	}
 	//close(w.jobs)

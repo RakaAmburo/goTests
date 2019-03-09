@@ -34,6 +34,7 @@ func listen(packages <-chan Package, list []Package, mutex *sync.Mutex) {
 	for pkg := range packages {
 		fmt.Println("pasa por aqui")
 		index := pkg.GetIndex()
+		fmt.Println(index)
 		mutex.Lock()
 		list[index] = pkg
 		mutex.Unlock()

@@ -11,19 +11,9 @@ import (
 func main() {
 	fmt.Println("start")
 
-	writer := new(app.CsvWriter)
-	writer.Init("resutl.txt")
-	defer writer.Close()
 
-	topic := &app.SqlTopic{}
-	topic.Init(2)
 
-	task := &sync.WaitGroup{}
-	task.Add(1)
-	consumer := new(app.SqlConsumer)
-	consumer.Init(2, topic, writer, task)
-
-	pkg := new(app.SqlPackage)
+	/*pkg := new(app.SqlPackage)
 	pkg.Init(3, 0)
 
 	pkg.Put([]string{"Country", "City", "Population"})
@@ -38,7 +28,7 @@ func main() {
 	pkg2.Put([]string{"Spain", "madrid", "789650"})
 
 	topic.Publish(pkg)
-	topic.Publish(pkg2)
+	topic.Publish(pkg2)*/
 
 	//---------
 
@@ -49,26 +39,39 @@ func main() {
 		panic(err.Error())
 	}
 	defer db.Close()
+	//db.SetMaxIdleConns(5)
 
-	handleCount := app.HandleSqlCount{}
+	argsCount := []interface{}{"2019-02-08", "2019-02-09"}
+	argsLimited := []interface{}{"2019-02-08", "2019-02-09", 20, 0}
 
-	app.ExecAndDo(db, app.CountUsuariosEntrantes, []interface{}{}, handleCount.CalculateLoops)
+	handleCount := &app.HandleSqlCount{}
+	handleCount.Init(20)
 
-	jobSize := handleCount.GetResult()
+	app.ExecAndDo(db, app.CountUsuariosEntrantes, argsCount, handleCount.CalculateLoops)
+
+	jobSize := handleCount.GetLoopSize()
+
+	writer := new(app.CsvWriter)
+	writer.Init("result.txt")
+	defer writer.Close()
+
+	topic := &app.SqlTopic{}
+	topic.Init(jobSize)
+
+	task := &sync.WaitGroup{}
+	task.Add(1)
+	consumer := new(app.SqlConsumer)
+	consumer.Init(jobSize, topic, writer, task)
+
 	workers := new(app.Workers)
-	workers.Init(jobSize)
+	workers.Init(jobSize, 5)
 	for i := 0; i < jobSize; i++ {
 		job := &app.SqlJob{}
-		job.Init([]interface{}{}, "", topic, nil, db)
+		pkg := &app.SqlPackage{}
+		pkg.Init(10, i)
+		job.Init(argsLimited, app.UsuariosEntrantesMLB, topic, pkg, db)
 		workers.AddWork(job)
 	}
-
-
-	//execanddo to count
-	//handlecount and extract info
-	//calcular loops
-	//instanciar todo y crear un publisher <- NO SE VA A ENCARGAR EL JOB
-	//crear jobs y asignarlos al worker con lo que necestia el exec and do
 
 
 	//---------

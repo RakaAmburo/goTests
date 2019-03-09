@@ -15,10 +15,10 @@ var (
 )
 
 type Pepe struct {
-	CurrencyID string  `json:"currency_id"`
+	CurrencyID string `json:"currency_id"`
 }
 
-func (Pepe) doSom(results []sql.RawBytes){
+func (Pepe) doSom(results []sql.RawBytes) {
 	for _, data := range results {
 		fmt.Print(string(data), ",")
 
@@ -39,14 +39,14 @@ func test() {
 	pepe := Pepe{}
 	ExecAndDo(db, CountUsuariosEntrantes, args2, pepe.doSom)
 
-	fmt.Print("contduria",count)
+	fmt.Print("contduria", count)
 
 	//args := []interface{}{"2019-02-08", "2019-02-15"}
 
 	//ExecAndDo(db, UsuariosEntrantesMLB, args, printResults)
 }
 
-func setCount(results []sql.RawBytes){
+func setCount(results []sql.RawBytes) {
 	count, _ = strconv.Atoi(string(results[0]))
 }
 
@@ -82,6 +82,7 @@ func ExecAndDo(db *sql.DB, someQuery string, withArgs []interface{}, do workerFu
 			log.Fatal(err)
 		}
 		do(values)
+		//fmt.Println(values)
 	}
 	err = rows.Err()
 	if err != nil {
@@ -99,11 +100,12 @@ FROM
 WHERE 
 	new_user_status_id = 'investing' AND 
     date_created >= ? AND 
-    date_created < ?
+    date_created < ? AND
+    user_id regexp '^22+'
 GROUP BY  
 	user_id 
 ORDER BY  
-	1, 2 ASC LIMIT 1000
+	1, 2 ASC LIMIT ? OFFSET ?
 `
 
 	CountUsuariosEntrantes = `
@@ -117,9 +119,29 @@ ORDER BY
         user_status_history
     WHERE
         new_user_status_id = 'investing'
-            AND date_created >= '2019-02-08'
-            AND date_created < '2019-02-15'
+            AND date_created >= ?
+            AND date_created < ?
+            AND user_id regexp '^22+'
     GROUP BY user_id) AS users
       
+`
+
+	SelectUsuariosEntrantesLimited = `
+    
+      SELECT 
+    MIN(date_created) AS date_investing, 
+	user_id AS user_id
+    FROM
+    (SELECT 
+        MIN(date_created) AS date_investing
+    FROM
+        user_status_history
+    WHERE
+        new_user_status_id = 'investing'
+            AND date_created >= ?
+            AND date_created < ?
+            AND user_id regexp '^22+'
+    GROUP BY user_id) AS users
+    LIMIT ? OFFSET ?
 `
 )

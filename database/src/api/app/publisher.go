@@ -10,9 +10,9 @@ type Publisher struct {
 }
 
 func (pub Publisher) publishResults(results []sql.RawBytes) {
-	pkg := new(SqlPackage)
+	/*pkg := new(SqlPackage)
 	for _, field := range results {
 
-	}
+	}*/
 
 }

@@ -10,7 +10,7 @@ func Test_NewUseCases(t *testing.T) {
 	//ass := assert.New(t)
 
 	workers := new(app.Workers)
-	workers.Init(3)
+	workers.Init(3, 5)
 
 	job := app.Job{}
 	job1 := app.Job{}

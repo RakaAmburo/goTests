@@ -1,3 +1,0 @@
-Country,City,Population222
-Japan,Tokyo,923456
-Australia,Sydney,789650
