@@ -37,7 +37,7 @@ func test() {
 
 	args2 := []interface{}{}
 	pepe := Pepe{}
-	ExecAndDo(db, CountUsuariosEntrantes, args2, pepe.doSom)
+	ExecAndDo(db, CountUsuariosEntrantesMLB, args2, pepe.doSom)
 
 	fmt.Print("contduria", count)
 
@@ -82,7 +82,6 @@ func ExecAndDo(db *sql.DB, someQuery string, withArgs []interface{}, do workerFu
 			log.Fatal(err)
 		}
 		do(values)
-		//fmt.Println(values)
 	}
 	err = rows.Err()
 	if err != nil {
@@ -91,7 +90,7 @@ func ExecAndDo(db *sql.DB, someQuery string, withArgs []interface{}, do workerFu
 }
 
 const (
-	UsuariosEntrantesMLB = `
+	SelectUsuariosEntrantesMLBLimited = `
 SELECT  
 	MIN(date_created) AS date_investing, 
 	user_id AS user_id
@@ -108,7 +107,7 @@ ORDER BY
 	1, 2 ASC LIMIT ? OFFSET ?
 `
 
-	CountUsuariosEntrantes = `
+	CountUsuariosEntrantesMLB = `
     
       SELECT 
     COUNT(*)
@@ -124,24 +123,5 @@ ORDER BY
             AND user_id regexp '^22+'
     GROUP BY user_id) AS users
       
-`
-
-	SelectUsuariosEntrantesLimited = `
-    
-      SELECT 
-    MIN(date_created) AS date_investing, 
-	user_id AS user_id
-    FROM
-    (SELECT 
-        MIN(date_created) AS date_investing
-    FROM
-        user_status_history
-    WHERE
-        new_user_status_id = 'investing'
-            AND date_created >= ?
-            AND date_created < ?
-            AND user_id regexp '^22+'
-    GROUP BY user_id) AS users
-    LIMIT ? OFFSET ?
 `
 )

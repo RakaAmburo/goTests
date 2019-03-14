@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"sync/atomic"
 )
 
@@ -9,31 +8,26 @@ type Runner interface {
 	run()
 }
 
-type Job struct {
-}
-
-func (Job) run() {
-	fmt.Println("DOING SOME WORK")
-}
-
 type Workers struct {
 	jobs chan Runner
 	executedTasks *uint64
+
 }
 
-func (w *Workers) Init(size int, workers int) {
+func (w *Workers) Init(size int, workers int, timeOut *RandomWait) {
 	w.jobs = make(chan Runner, size)
 	w.executedTasks = new(uint64)
 	for x := 1; x <= workers; x++ {
-		go startWorkers(w.executedTasks, w.jobs) //, results)
+		go startWorkers(w.executedTasks, w.jobs, timeOut)
 	}
 	//close(w.jobs)
 }
 
-func startWorkers(counter *uint64, jobs <-chan Runner) { //, results chan<- Runner) {
+func startWorkers(counter *uint64, jobs <-chan Runner, timeOut *RandomWait) {
 	for j := range jobs {
 		j.run()
 		atomic.AddUint64(counter, 1)
+		timeOut.Wait()
 	}
 }
 

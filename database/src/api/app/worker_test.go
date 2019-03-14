@@ -3,7 +3,6 @@ package app_test
 import (
 	"github.com/mercadolibre/goTests/database/src/api/app"
 	"testing"
-	"time"
 )
 
 func Test_NewUseCases(t *testing.T) {
@@ -12,7 +11,7 @@ func Test_NewUseCases(t *testing.T) {
 	workers := new(app.Workers)
 	workers.Init(3, 5)
 
-	job := app.Job{}
+	/*job := app.Job{}
 	job1 := app.Job{}
 	job2 := app.Job{}
 	job3 := app.Job{}
@@ -22,6 +21,6 @@ func Test_NewUseCases(t *testing.T) {
 	workers.AddWork(job2)
 	workers.AddWork(job3)
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(2 * time.Second)*/
 
 }

@@ -2,7 +2,7 @@ package app
 
 import (
 	"encoding/csv"
-	"log"
+	"github.com/mercadolibre/goTests/database/src/api/app/tools"
 	"os"
 )
 
@@ -32,18 +32,11 @@ func (cw *CsvWriter) BulkWrite(pkg Package) {
 	lines := pkg.Extract()
 
 	for _, line := range lines {
-		err := cw.writer.Write(line)
-		checkError("Cant write to file", err)
-		cw.writer.Flush()
+		if line != nil {
+			err := cw.writer.Write(line)
+			tools.CheckError("Cant write to file", err)
+			cw.writer.Flush()
+		}
+
 	}
 }
-
-func checkError(message string, err error) {
-	if err != nil {
-		log.Fatal(message, err)
-	}
-}
-
-
-
-

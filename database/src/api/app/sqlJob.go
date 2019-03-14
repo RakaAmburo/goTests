@@ -2,7 +2,6 @@ package app
 
 import (
 	"database/sql"
-	"fmt"
 )
 
 type SqlJob struct {
@@ -22,9 +21,7 @@ func (job *SqlJob) Init(args []interface{}, query string, topic Topic, pkg Packa
 }
 
 func (job *SqlJob) run() {
-	fmt.Println("DOING SOME WORK")
 	ExecAndDo(job.db, job.query, job.args, job.BuildPackage)
-	fmt.Println("DONED QUERY")
 	job.topic.Publish(job.pkg)
 }
 
@@ -34,6 +31,4 @@ func (job *SqlJob) BuildPackage(results []sql.RawBytes) {
 		line[index] = string(field)
 	}
 	job.pkg.Put(line)
-	fmt.Println("linea:")
-	fmt.Println(line)
 }

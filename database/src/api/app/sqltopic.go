@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -32,9 +31,7 @@ func (t *SqlTopic) Get(index int) Package {
 
 func listen(packages <-chan Package, list []Package, mutex *sync.Mutex) {
 	for pkg := range packages {
-		fmt.Println("pasa por aqui")
 		index := pkg.GetIndex()
-		fmt.Println(index)
 		mutex.Lock()
 		list[index] = pkg
 		mutex.Unlock()

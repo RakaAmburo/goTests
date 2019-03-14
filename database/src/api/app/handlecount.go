@@ -2,6 +2,7 @@ package app
 
 import (
 	"database/sql"
+	"github.com/mercadolibre/goTests/database/src/api/app/tools"
 	"math"
 	"strconv"
 )
@@ -17,7 +18,8 @@ func (h *HandleSqlCount) Init(itemsPerPackage int) {
 
 func (h *HandleSqlCount) CalculateLoops(results []sql.RawBytes) {
 	totalString := string(results[0])
-	total, _ := strconv.Atoi(totalString)
+	total, err := strconv.Atoi(totalString)
+	tools.CheckError("HandleSqlCount - CalculateLoops", err)
 	h.loopSize = int(math.Ceil(float64(total) / float64(h.itemsPerPackage)))
 }
 
