@@ -12,7 +12,7 @@ func main() {
 
 	//falta ordenar, manejo de errores y un buen log
 
-	db, err := sql.Open("mysql", "ppaparini:FZS6RYQN@tcp(assetmgmtcore01.master.mlaws.com:6612)/asmgmtmlb")
+	db, err := sql.Open("mysql", "")
 	// if there is an error opening the connection, handle it
 	if err != nil {
 		fmt.Println("error")

@@ -27,7 +27,7 @@ func (Pepe) doSom(results []sql.RawBytes) {
 }
 
 func test() {
-	db, err := sql.Open("mysql", "ppaparini:FZS6RYQN@tcp(assetmgmtcore01.master.mlaws.com:6612)/asmgmtmlb")
+	db, err := sql.Open("mysql", "")
 	// if there is an error opening the connection, handle it
 	if err != nil {
 		fmt.Println("error")
