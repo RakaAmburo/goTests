@@ -50,7 +50,7 @@ func main() {
 	handleCount := &sql2.HandleSqlCount{}
 	handleCount.Init(itemsPerPackage)
 
-	sql2.ExecAndDo(db, sql2.CountUsuariosEntrantesMLB, argsCount, handleCount.CalculateLoops)
+	sql2.ExecAndDo(db, sql2.CountNewUsersMLB, argsCount, handleCount.CalculateLoops)
 
 	jobsNumber := handleCount.GetLoopSize()
 
@@ -78,7 +78,7 @@ func main() {
 		job := &jobs.SqlJob{}
 		pkg := &packages.SqlPackage{}
 		pkg.Init(itemsPerPackage, i)
-		job.Init(argsLimitedAux, sql2.SelectUsuariosEntrantesMLBLimited, topic, pkg, db)
+		job.Init(argsLimitedAux, sql2.SelectNewUsersMLBLimited, topic, pkg, db)
 		workers.AddWork(job)
 		timeBetweenJobs.Wait()
 	}
