@@ -1,15 +1,14 @@
 package app_test
 
 import (
-	"github.com/mercadolibre/goTests/database/src/api/app"
 	"testing"
 )
 
 func Test_NewUseCases(t *testing.T) {
 	//ass := assert.New(t)
 
-	workers := new(app.Workers)
-	workers.Init(3, 5)
+	//workers := new(app.Workers)
+	//workers.Init(3, 5)
 
 	/*job := app.Job{}
 	job1 := app.Job{}

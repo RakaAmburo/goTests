@@ -4,15 +4,29 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/mercadolibre/goTests/database/src/api/app"
+	"github.com/mercadolibre/goTests/database/src/api/app/consumers"
+	"github.com/mercadolibre/goTests/database/src/api/app/jobs"
+	"github.com/mercadolibre/goTests/database/src/api/app/packages"
+	sql2 "github.com/mercadolibre/goTests/database/src/api/app/sql"
+	"github.com/mercadolibre/goTests/database/src/api/app/tools"
+	"github.com/mercadolibre/goTests/database/src/api/app/topics"
+	"github.com/mercadolibre/goTests/database/src/api/app/writers"
 	"sync"
 )
+
+
 
 func main() {
 	fmt.Println("start")
 
-	//falta ordenar, manejo de errores y un buen log
+	//, manejo de errores y un buen log/reporte tests, sacar a tasks y merojar config
 
-	db, err := sql.Open("mysql", "")
+	//location of properties file in your machine
+	path := "../../../../secure"
+	dbConf := app.GetDbPropertes(path, "CORE_MLB")
+    format := "%s:%s@tcp(%s:%d)/%s"
+    dataSourceName := fmt.Sprintf(format, dbConf.User, dbConf.PassWord, dbConf.Url, dbConf.Port, dbConf.Schema)
+	db, err := sql.Open("mysql", dataSourceName)
 	// if there is an error opening the connection, handle it
 	if err != nil {
 		fmt.Println("error")
@@ -24,33 +38,33 @@ func main() {
 
 	var itemsPerPackage = 20
 	var workerSize = 5
-	timeBetweenJobs := &app.RandomWait{}
+	timeBetweenJobs := &tools.RandomWait{}
 	timeBetweenJobs.Init(100, 200)
 
-	workerTime := &app.RandomWait{}
+	workerTime := &tools.RandomWait{}
 	workerTime.Init(50, 100)
 
 	argsCount := []interface{}{"2019-02-08", "2019-02-09"}
 	argsLimited := []interface{}{"2019-02-08", "2019-02-09", itemsPerPackage, 0}
 
-	handleCount := &app.HandleSqlCount{}
+	handleCount := &sql2.HandleSqlCount{}
 	handleCount.Init(itemsPerPackage)
 
-	app.ExecAndDo(db, app.CountUsuariosEntrantesMLB, argsCount, handleCount.CalculateLoops)
+	sql2.ExecAndDo(db, sql2.CountUsuariosEntrantesMLB, argsCount, handleCount.CalculateLoops)
 
 	jobsNumber := handleCount.GetLoopSize()
 
-	writer := new(app.CsvWriter)
+	writer := new(writers.CsvWriter)
 	writer.Init("result.txt")
 	defer writer.Close()
 
-	topic := &app.SqlTopic{}
+	topic := &topics.SqlTopic{}
 	topic.Init(jobsNumber)
 
 	taskToWait := &sync.WaitGroup{}
 	taskToWait.Add(1)
 
-	consumer := new(app.SqlConsumer)
+	consumer := new(consumers.SqlConsumer)
 	consumer.Init(jobsNumber, topic, writer, taskToWait)
 
 	workers := new(app.Workers)
@@ -61,10 +75,10 @@ func main() {
 			offset := itemsPerPackage * i
 			(argsLimitedAux)[3] = offset
 		}
-		job := &app.SqlJob{}
-		pkg := &app.SqlPackage{}
+		job := &jobs.SqlJob{}
+		pkg := &packages.SqlPackage{}
 		pkg.Init(itemsPerPackage, i)
-		job.Init(argsLimitedAux, app.SelectUsuariosEntrantesMLBLimited, topic, pkg, db)
+		job.Init(argsLimitedAux, sql2.SelectUsuariosEntrantesMLBLimited, topic, pkg, db)
 		workers.AddWork(job)
 		timeBetweenJobs.Wait()
 	}

@@ -1,4 +1,4 @@
-package app
+package packages
 
 type SqlPackage struct {
 	list  [][]string

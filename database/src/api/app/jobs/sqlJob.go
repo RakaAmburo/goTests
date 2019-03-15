@@ -1,18 +1,20 @@
-package app
+package jobs
 
 import (
 	"database/sql"
+	"github.com/mercadolibre/goTests/database/src/api/app"
+	sql2 "github.com/mercadolibre/goTests/database/src/api/app/sql"
 )
 
 type SqlJob struct {
 	query string
 	args  []interface{}
-	topic Topic
-	pkg Package
+	topic app.Topic
+	pkg app.Package
 	db *sql.DB
 }
 
-func (job *SqlJob) Init(args []interface{}, query string, topic Topic, pkg Package, db *sql.DB) {
+func (job *SqlJob) Init(args []interface{}, query string, topic app.Topic, pkg app.Package, db *sql.DB) {
 	job.query = query
 	job.args = args
 	job.topic = topic
@@ -20,8 +22,8 @@ func (job *SqlJob) Init(args []interface{}, query string, topic Topic, pkg Packa
 	job.db = db
 }
 
-func (job *SqlJob) run() {
-	ExecAndDo(job.db, job.query, job.args, job.BuildPackage)
+func (job *SqlJob) Run() {
+	sql2.ExecAndDo(job.db, job.query, job.args, job.BuildPackage)
 	job.topic.Publish(job.pkg)
 }
 

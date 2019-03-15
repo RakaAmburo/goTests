@@ -1,7 +1,8 @@
-package app
+package writers
 
 import (
 	"encoding/csv"
+	"github.com/mercadolibre/goTests/database/src/api/app"
 	"github.com/mercadolibre/goTests/database/src/api/app/tools"
 	"os"
 )
@@ -28,7 +29,7 @@ func (cw *CsvWriter) Close() {
 	cw.file.Close()
 }
 
-func (cw *CsvWriter) BulkWrite(pkg Package) {
+func (cw *CsvWriter) BulkWrite(pkg app.Package) {
 	lines := pkg.Extract()
 
 	for _, line := range lines {

@@ -1,4 +1,4 @@
-package app
+package sql
 
 import (
 	"database/sql"
