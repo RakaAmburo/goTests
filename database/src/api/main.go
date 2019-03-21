@@ -11,19 +11,22 @@ import (
 	"github.com/mercadolibre/goTests/database/src/api/app/tools"
 	"github.com/mercadolibre/goTests/database/src/api/app/topics"
 	"github.com/mercadolibre/goTests/database/src/api/app/writers"
+	"log"
 	"sync"
+	"time"
 )
 
 
 
 func main() {
 	fmt.Println("start")
+	start := time.Now()
 
-	//, manejo de errores y un buen log/reporte tests, sacar a tasks y merojar config
+	//y un buen log/reporte tests, sacar a tasks y merojar config
 
 	//location of properties file in your machine
 	path := "../../../../secure"
-	dbConf := app.GetDbPropertes(path, "CORE_MLB")
+	dbConf := app.GetDbProperties(path, "CORE_MLB")
     format := "%s:%s@tcp(%s:%d)/%s"
     dataSourceName := fmt.Sprintf(format, dbConf.User, dbConf.PassWord, dbConf.Url, dbConf.Port, dbConf.Schema)
 	db, err := sql.Open("mysql", dataSourceName)
@@ -34,13 +37,15 @@ func main() {
 	}
 	defer db.Close()
 
-	//db.SetMaxIdleConns(5)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(0)
+	log.Printf("%+v", db.Stats())
 
-	var itemsPerPackage = 20
+	//Configuration
+	var itemsPerPackage = 400
 	var workerSize = 5
 	timeBetweenJobs := &tools.RandomWait{}
 	timeBetweenJobs.Init(100, 200)
-
 	workerTime := &tools.RandomWait{}
 	workerTime.Init(50, 100)
 
@@ -49,24 +54,25 @@ func main() {
 
 	handleCount := &sql2.HandleSqlCount{}
 	handleCount.Init(itemsPerPackage)
-
 	sql2.ExecAndDo(db, sql2.CountNewUsersMLB, argsCount, handleCount.CalculateLoops)
-
 	jobsNumber := handleCount.GetLoopSize()
 
+	//Writer
 	writer := new(writers.CsvWriter)
 	writer.Init("result.txt")
 	defer writer.Close()
 
+	//Topic
 	topic := &topics.SqlTopic{}
 	topic.Init(jobsNumber)
 
+	//Consumer
 	taskToWait := &sync.WaitGroup{}
 	taskToWait.Add(1)
-
 	consumer := new(consumers.SqlConsumer)
 	consumer.Init(jobsNumber, topic, writer, taskToWait)
 
+	//Worker assigment
 	workers := new(app.Workers)
 	workers.Init(jobsNumber, workerSize, workerTime)
 	for i := 0; i < jobsNumber; i++ {
@@ -83,6 +89,10 @@ func main() {
 		timeBetweenJobs.Wait()
 	}
 
+	//time.Sleep(1 * time.Second)
+	//log.Printf("%+v", db.Stats())
+
 	taskToWait.Wait()
+	fmt.Println(time.Since(start))
 
 }

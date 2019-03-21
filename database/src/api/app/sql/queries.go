@@ -1,5 +1,7 @@
 package sql
 
+//user_id regexp '^22+'
+
 const (
 	SelectNewUsersMLBLimited = `
 SELECT  
@@ -10,8 +12,8 @@ FROM
 WHERE 
 	new_user_status_id = 'investing' AND 
     date_created >= ? AND 
-    date_created < ? AND
-    user_id regexp '^22+'
+    date_created < ? 
+    
 GROUP BY  
 	user_id 
 ORDER BY  
@@ -31,7 +33,6 @@ ORDER BY
         new_user_status_id = 'investing'
             AND date_created >= ?
             AND date_created < ?
-            AND user_id regexp '^22+'
     GROUP BY user_id) AS users
       
 `

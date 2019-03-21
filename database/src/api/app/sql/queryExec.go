@@ -3,6 +3,7 @@ package sql
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/mercadolibre/goTests/database/src/api/app/tools"
 	"log"
 )
 
@@ -18,7 +19,7 @@ func ExecAndDo(db *sql.DB, someQuery string, withArgs []interface{}, do workerFu
 
 	columns, err := rows.Columns()
 	if err != nil {
-		panic(err.Error())
+		tools.CheckError("queryExec - ExecAndDo", err)
 	}
 	values := make([]sql.RawBytes, len(columns))
 	results := make([]interface{}, len(values))
@@ -29,12 +30,12 @@ func ExecAndDo(db *sql.DB, someQuery string, withArgs []interface{}, do workerFu
 	for rows.Next() {
 		err := rows.Scan(results...)
 		if err != nil {
-			log.Fatal(err)
+			tools.CheckError("queryExec - ExecAndDo", err)
 		}
 		do(values)
 	}
 	err = rows.Err()
 	if err != nil {
-		log.Fatal(err)
+		tools.CheckError("queryExec - ExecAndDo", err)
 	}
 }

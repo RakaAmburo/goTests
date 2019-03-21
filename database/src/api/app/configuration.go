@@ -1,7 +1,7 @@
 package app
 
 import (
-	"fmt"
+	"github.com/mercadolibre/goTests/database/src/api/app/tools"
 	"github.com/spf13/viper"
 	"os"
 )
@@ -14,19 +14,19 @@ type DataBaseConfig struct {
 	Url      string
 }
 
-func GetDbPropertes(path string, dbName string) *DataBaseConfig {
+func GetDbProperties(path string, dbName string) *DataBaseConfig {
 
 	viper.SetConfigName("dbConfig")
 	viper.AddConfigPath(path)
 	err := viper.ReadInConfig()
 	conf := &DataBaseConfig{}
 	if err != nil {
-		fmt.Println("Config not found...")
+		tools.CheckError("Config not found...", err)
 		os.Exit(1)
 	} else {
 
 		if err := viper.Sub(dbName).Unmarshal(conf); err != nil {
-			fmt.Printf("couldn't read config: %s", err)
+			tools.CheckError("couldn't read config: ", err)
 			os.Exit(1)
 		}
 
