@@ -10,8 +10,8 @@ type SqlJob struct {
 	query string
 	args  []interface{}
 	topic app.Topic
-	pkg app.Package
-	db *sql.DB
+	pkg   app.Package
+	db    *sql.DB
 }
 
 func (job *SqlJob) Init(args []interface{}, query string, topic app.Topic, pkg app.Package, db *sql.DB) {
@@ -25,6 +25,10 @@ func (job *SqlJob) Init(args []interface{}, query string, topic app.Topic, pkg a
 func (job *SqlJob) Run() {
 	sql2.ExecAndDo(job.db, job.query, job.args, job.BuildPackage)
 	job.topic.Publish(job.pkg)
+}
+
+func (job *SqlJob) GetPackageNumber() int {
+	return job.pkg.GetIndex()
 }
 
 func (job *SqlJob) BuildPackage(results []sql.RawBytes) {

@@ -7,6 +7,7 @@ import (
 	"github.com/mercadolibre/goTests/database/src/api/app/consumers"
 	"github.com/mercadolibre/goTests/database/src/api/app/jobs"
 	"github.com/mercadolibre/goTests/database/src/api/app/packages"
+	"github.com/mercadolibre/goTests/database/src/api/app/reporters"
 	sql2 "github.com/mercadolibre/goTests/database/src/api/app/sql"
 	"github.com/mercadolibre/goTests/database/src/api/app/tools"
 	"github.com/mercadolibre/goTests/database/src/api/app/topics"
@@ -15,8 +16,6 @@ import (
 	"sync"
 	"time"
 )
-
-
 
 func main() {
 	fmt.Println("start")
@@ -27,8 +26,8 @@ func main() {
 	//location of properties file in your machine
 	path := "../../../../secure"
 	dbConf := app.GetDbProperties(path, "CORE_MLB")
-    format := "%s:%s@tcp(%s:%d)/%s"
-    dataSourceName := fmt.Sprintf(format, dbConf.User, dbConf.PassWord, dbConf.Url, dbConf.Port, dbConf.Schema)
+	format := "%s:%s@tcp(%s:%d)/%s"
+	dataSourceName := fmt.Sprintf(format, dbConf.User, dbConf.PassWord, dbConf.Url, dbConf.Port, dbConf.Schema)
 	db, err := sql.Open("mysql", dataSourceName)
 	// if there is an error opening the connection, handle it
 	if err != nil {
@@ -36,16 +35,16 @@ func main() {
 		panic(err.Error())
 	}
 	defer db.Close()
+	//go printDbStats(db)
 
 	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(0)
-	log.Printf("%+v", db.Stats())
+	//db.SetMaxIdleConns(0)
 
 	//Configuration
-	var itemsPerPackage = 400
-	var workerSize = 5
+	var itemsPerPackage = 100 //600
+	var workerSize = 5        //8
 	timeBetweenJobs := &tools.RandomWait{}
-	timeBetweenJobs.Init(100, 200)
+	timeBetweenJobs.Init(25, 100)
 	workerTime := &tools.RandomWait{}
 	workerTime.Init(50, 100)
 
@@ -89,10 +88,18 @@ func main() {
 		timeBetweenJobs.Wait()
 	}
 
-	//time.Sleep(1 * time.Second)
-	//log.Printf("%+v", db.Stats())
-
 	taskToWait.Wait()
 	fmt.Println(time.Since(start))
+
+	reporters.PrintPkgPerWrk()
+
+}
+
+func printDbStats(db *sql.DB) {
+
+	for {
+		time.Sleep(time.Millisecond * 500)
+		log.Printf("%+v", db.Stats())
+	}
 
 }
